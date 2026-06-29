@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://cakx25s6funlt"]
+
+[ext_resource type="Texture2D" uid="uid://crarx0bpkiu0n" path="res://Hana Caraka - Dungeon & Mining [sample]/Ore n Gems/Ores/stone.png" id="1_1di36"]
+[ext_resource type="Script" uid="uid://bq2xt0op163dx" path="res://rock.gd" id="1_ik6fu"]
+[ext_resource type="Resource" uid="uid://c7vu2e47buhca" path="res://data/rocks/iron.tres" id="2_ik6fu"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mek2u"]
+atlas = ExtResource("1_1di36")
+region = Rect2(16, 48, 16, 16)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ik6fu"]
+radius = 7.0
+
+[node name="Rock" type="StaticBody2D" unique_id=823875651]
+script = ExtResource("1_ik6fu")
+data = ExtResource("2_ik6fu")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=143245892]
+texture = SubResource("AtlasTexture_mek2u")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=69140433]
+shape = SubResource("CircleShape2D_ik6fu")
