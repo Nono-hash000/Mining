@@ -57,8 +57,7 @@ func setup(target_player: Player) -> void:
 
 func _build_ui() -> void:
 	layer = 10
-	
-	process_mode = Node.PROCESS_MODE_ALWAYS
+	process_mode = Node.PROCESS_MODE_ALWAYS 
 	
 	dim_background = ColorRect.new()
 	dim_background.color = DIM_BG
@@ -67,7 +66,8 @@ func _build_ui() -> void:
 	add_child(dim_background)
 	
 	panel = PanelContainer.new()
-	dim_background.add_child(panel)
+	dim_background.add_child(panel) 
+	
 	panel.set_anchors_preset(Control.PRESET_CENTER)
 	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	panel.grow_vertical = Control.GROW_DIRECTION_BOTH
@@ -82,14 +82,14 @@ func _build_ui() -> void:
 	panel.add_child(margin)
 	
 	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 8)
+	vbox.add_theme_constant_override("separation", 4)
 	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	vbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	margin.add_child(vbox)
 	
 	var title := Label.new()
 	title.text = "Inventory"
-	title.add_theme_font_size_override("font_size", 18)
+	title.add_theme_font_size_override("font_size", 10)
 	title.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9))
 	vbox.add_child(title)
 	
@@ -102,15 +102,15 @@ func _build_ui() -> void:
 func _make_panel_style() -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
 	style.bg_color = PANEL_BG
-	style.set_border_width_all(4)
+	style.set_border_width_all(2)
 	style.border_color = PANEL_BORDER_DARK
-	style.set_corner_radius_all(2)
+	style.set_corner_radius_all(1)
 	return style
 
 func _make_slot_style() -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
 	style.bg_color = SLOT_BG
-	style.set_border_width_all(2)
+	style.set_border_width_all(1)
 	style.border_color = SLOT_BORDER
 	return style
 
@@ -143,16 +143,16 @@ func _create_slot_node() -> Dictionary:
 	
 	var label_margin := MarginContainer.new()
 	label_margin.set_anchors_preset(Control.PRESET_FULL_RECT)
-	label_margin.add_theme_constant_override("margin_right", 4)
-	label_margin.add_theme_constant_override("margin_bottom", 4)
+	label_margin.add_theme_constant_override("margin_right", 2)
+	label_margin.add_theme_constant_override("margin_bottom", 1)
 	label_margin.mouse_filter = Control.MOUSE_FILTER_PASS
 	slot.add_child(label_margin)
 	
 	var count_label := Label.new()
-	count_label.add_theme_font_size_override("font_size", 13)
+	count_label.add_theme_font_size_override("font_size", 8)
 	count_label.add_theme_color_override("font_color", TEXT_COLOR)
 	count_label.add_theme_color_override("font_outline_color", COUNT_OUTLINE)
-	count_label.add_theme_constant_override("outline_size", 3)
+	count_label.add_theme_constant_override("outline_size", 2)
 	count_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	count_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
 	label_margin.add_child(count_label)
@@ -163,62 +163,41 @@ func _create_slot_node() -> Dictionary:
 		"slot": slot,
 		"icon": icon,
 		"count_label": count_label,
-		"item_name": "",
+		"item_resource": null,
 		"current_count": 0
 	}
 
 func _clear_slot_visuals(index: int) -> void:
 	var slot_data = slot_nodes[index]
-	slot_data["item_name"] = ""
+	slot_data["item_resource"] = null
 	slot_data["current_count"] = 0
 	slot_data["icon"].texture = null
 	slot_data["count_label"].text = ""
 	slot_data["count_label"].visible = false
 
-func _on_ore_collected(ore_data: OreData, _total_player_count: int) -> void:
-	_add_item_to_grid(ore_data.ore_name, ore_data.texture)
-
-func _add_item_to_grid(item_name: String, texture: Texture2D) -> void:
-	for i in range(TOTAL_SLOTS):
-		var slot = slot_nodes[i]
-		if slot["item_name"] == item_name and slot["current_count"] < MAX_STACK_SIZE:
-			slot["current_count"] += 1
-			_update_slot_visuals(i, texture)
-			return
-	
-	for i in range(TOTAL_SLOTS):
-		var slot = slot_nodes[i]
-		if slot["item_name"] == "":
-			slot["item_name"] = item_name
-			slot["current_count"] = 1
-			_update_slot_visuals(i, texture)
-			return
-
-func _update_slot_visuals(index: int, texture: Texture2D) -> void:
-	var slot = slot_nodes[index]
-	slot["icon"].texture = texture
-	slot["count_label"].text = str(slot["current_count"])
-	slot["count_label"].visible = slot["current_count"] > 1
+func _on_ore_collected(_ore_data: OreData, _total_player_count: int) -> void:
+	_populate_from_existing_inventory()
 
 func _populate_from_existing_inventory() -> void:
 	for i in range(TOTAL_SLOTS):
 		_clear_slot_visuals(i)
 	
-	for ore_name in player.inventory.keys():
-		var total_count: int = player.inventory[ore_name]
-		while total_count > 0:
+	var current_slot_index := 0
+	for ore_data: OreData in player.inventory.keys():
+		var total_count: int = player.inventory[ore_data]
+		
+		while total_count > 0 and current_slot_index < TOTAL_SLOTS:
 			var batch = min(total_count, MAX_STACK_SIZE)
-			_fill_next_free_slot_with_batch(ore_name, batch, null)
+			var slot = slot_nodes[current_slot_index]
+			
+			slot["item_resource"] = ore_data
+			slot["current_count"] = batch
+			slot["icon"].texture = ore_data.texture
+			slot["count_label"].text = str(batch)
+			slot["count_label"].visible = batch > 1
+			
 			total_count -= batch
-
-func _fill_next_free_slot_with_batch(item_name: String, count: int, texture: Texture2D) -> void:
-	for i in range(TOTAL_SLOTS):
-		var slot = slot_nodes[i]
-		if slot["item_name"] == "":
-			slot["item_name"] = item_name
-			slot["current_count"] = count
-			_update_slot_visuals(i, texture)
-			return
+			current_slot_index += 1
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:

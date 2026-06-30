@@ -1,6 +1,6 @@
 extends Node2D
 
-const FILL_PERCENTAGE: float = 0.2
+const FILL_PERCENTAGE: float = 0.20
 const ROCK_SCENE = preload("res://scenes/rock.tscn")
 
 const ROCK_DATA_POOL: Array[RockData] = [
@@ -18,7 +18,15 @@ const ROCK_DATA_POOL: Array[RockData] = [
 func _ready() -> void:
 	_generate_rocks()
 	_position_objects()
+	
+	# Attach UI Windows
 	InventoryUI.attach_to(player, self)
+	
+	var tradeable_ores: Array[OreData] = [
+		preload("res://data/ores/stone_ore.tres"),
+		preload("res://data/ores/iron_ore.tres")
+	]
+	ShopUI.attach_to(player, self, tradeable_ores)
 
 func _position_objects() -> void:
 	var player_spawn: Marker2D = current_map.get_node("PlayerSpawn")
@@ -35,10 +43,8 @@ func _generate_rocks() -> void:
 	
 	for cell in ground_cells:
 		var tile_data = ground_layer.get_cell_tile_data(cell)
-		
 		if props_layer.get_cell_source_id(cell) != -1:
 			continue
-			
 		if tile_data and tile_data.get_custom_data("can_spawn_rocks") == true:
 			available_cells.append(cell)
 	
@@ -50,13 +56,16 @@ func _generate_rocks() -> void:
 	if eligible_pool.is_empty():
 		push_warning("Level: no RockData")
 		return
+		
+	var total_weight := 0
+	for rock_data in eligible_pool:
+		total_weight += rock_data.rarity
 	
 	for i in range(num_rocks):
 		var cell = available_cells[i]
-		var rock_data := _pick_weighted_rock_data(eligible_pool)
+		var rock_data := _pick_weighted_rock_data(eligible_pool, total_weight)
 		
 		var rock = ROCK_SCENE.instantiate()
-		
 		rock.data = rock_data
 		rock.ore_container = ore_container
 		
@@ -71,17 +80,11 @@ func _get_eligible_rock_data() -> Array[RockData]:
 			eligible.append(rock_data)
 	return eligible
 
-func _pick_weighted_rock_data(pool: Array[RockData]) -> RockData:
-	var total_weight := 0
-	for rock_data in pool:
-		total_weight += rock_data.rarity
-	
+func _pick_weighted_rock_data(pool: Array[RockData], total_weight: int) -> RockData:
 	var roll := randi_range(1, total_weight)
 	var running_total := 0
-	
 	for rock_data in pool:
 		running_total += rock_data.rarity
 		if roll <= running_total:
 			return rock_data
-	
 	return pool[-1]
