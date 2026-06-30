@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://crarx0bpkiu0n" path="res://Hana Caraka - Dungeon & Mining [sample]/Ore n Gems/Ores/stone.png" id="1_1di36"]
 [ext_resource type="Script" uid="uid://bq2xt0op163dx" path="res://rock.gd" id="1_ik6fu"]
 [ext_resource type="Resource" uid="uid://c7vu2e47buhca" path="res://data/rocks/iron.tres" id="2_ik6fu"]
+[ext_resource type="AudioStream" uid="uid://b275fw784vb6e" path="res://631485__newlocknew__rockbrk_stone-hitshattering-into-fragments_em_7lrs.wav" id="4_872ht"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mek2u"]
 atlas = ExtResource("1_1di36")
@@ -20,3 +21,8 @@ texture = SubResource("AtlasTexture_mek2u")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=69140433]
 shape = SubResource("CircleShape2D_ik6fu")
+
+[node name="RockBreakingSound" type="AudioStreamPlayer2D" parent="." unique_id=1427248467]
+stream = ExtResource("4_872ht")
+volume_db = -5.0
+pitch_scale = 2.0
