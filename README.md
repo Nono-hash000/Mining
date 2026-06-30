@@ -2,14 +2,14 @@
 
 A 2D retro mining game built with **Godot Engine 4**. Explore deep maps, mine various rock formations using weighted generation pools, collect dynamic ore resources, and manage items inside a clean, modular script-driven inventory UI system optimized for pixel-perfect display scales.
 
-## 🚀 Features
+##Features
 
 * **Dynamic Weighted Rock Generation**: Generates mineral veins across maps dynamically based on configurable structural rarity and target depth metrics.
 * **Custom Resource System**: Rocks and Ores are completely managed via decoupled `.tres` data containers for rapid expansion and content addition.
 * **Retro Canvas Scaling**: Configured for crisp, pixel-perfect **320×180 Viewport** rendering scaled cleanly up to a default 1280×720 display canvas.
 * **Dynamic Grid Inventory**: Script-generated UI component handling automated layouts, stacking constraints up to 64 items, layout recalculations, and absolute pause-state priority execution.
 
-## 🎮 Controls
+##Controls
 
 | Key Bind | Action | Description |
 | --- | --- | --- |
@@ -19,7 +19,7 @@ A 2D retro mining game built with **Godot Engine 4**. Explore deep maps, mine va
 
 ---
 
-## 📝 Script Breakdown
+##Script Breakdown
 
 ### 1. Weighted Level Spawner (`level.gd`)
 
