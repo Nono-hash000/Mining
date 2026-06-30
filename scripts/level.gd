@@ -1,6 +1,6 @@
 extends Node2D
 
-const FILL_PERCENTAGE: float = 0.4
+const FILL_PERCENTAGE: float = 0.2
 const ROCK_SCENE = preload("res://scenes/rock.tscn")
 
 const ROCK_DATA_POOL: Array[RockData] = [
