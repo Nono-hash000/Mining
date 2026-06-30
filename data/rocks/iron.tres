@@ -13,6 +13,6 @@ script = ExtResource("1_qo01q")
 texture = SubResource("AtlasTexture_2p1yt")
 max_health = 4
 rarity = 25
-min_depth = 3
+min_depth = 1
 ore_resource = ExtResource("1_2p1yt")
 metadata/_custom_type_script = "uid://dfys6g5nmx36y"

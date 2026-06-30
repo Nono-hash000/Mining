@@ -10,4 +10,5 @@ func _ready() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body is Player:
 		if body.add_ore(ore_data):
+			set_deferred("monitoring", false)
 			queue_free()

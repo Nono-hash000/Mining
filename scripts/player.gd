@@ -1,6 +1,8 @@
 class_name Player
 extends CharacterBody2D
 
+signal ore_collected(ore_data: OreData, new_count: int)
+
 const SPEED = 100.0
 
 var is_mining: bool = false
@@ -8,6 +10,8 @@ var hitbox_offset: Vector2
 var last_direction: Vector2 = Vector2.RIGHT
 var detected_rocks: Array = []
 var pickaxe_strength: int = 1
+
+var inventory: Dictionary = {}
 
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var hit_box: Area2D = $HitBox
@@ -111,5 +115,10 @@ func get_most_overlapping_rock() -> Rock:
 	return best_rock
 
 func add_ore(data: OreData) -> bool:
-	print(data)
+	if data == null:
+		return false
+	
+	var current_count: int = inventory.get(data.ore_name, 0)
+	inventory[data.ore_name] = current_count + 1
+	ore_collected.emit(data, inventory[data.ore_name])
 	return true

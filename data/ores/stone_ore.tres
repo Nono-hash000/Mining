@@ -9,7 +9,7 @@ region = Rect2(0, 0, 16, 16)
 
 [resource]
 script = ExtResource("1_1pas0")
-name = "stone_ore"
+ore_name = "Stone"
 texture = SubResource("AtlasTexture_ydtff")
 value = 10
 metadata/_custom_type_script = "uid://btqpwpmhfs85t"

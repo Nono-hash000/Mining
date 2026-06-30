@@ -8,6 +8,8 @@ var health: int
 
 @export var data: RockData
 
+var ore_container: Node2D
+
 @onready var sprite_2d: Sprite2D = $Sprite2D
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
 @onready var rock_breaking_sound: AudioStreamPlayer2D = $RockBreakingSound
@@ -41,9 +43,12 @@ func _drop_ore() -> void:
 	ore.position = position
 	ore.ore_data = data.ore_resource
 	
-	var level_root = get_parent().get_parent()
-	var ore_container = level_root.get_node("OreContainer")
-	ore_container.add_child(ore)
+	if ore_container:
+		ore_container.add_child(ore)
+	else:
+		push_warning("No ore container assigned")
+		var level_root = get_parent().get_parent()
+		level_root.get_node("OreContainer").add_child(ore)
 	
 	var random_x = randf_range(-15, 15)
 	var target_x = ore.position.x + random_x

@@ -9,7 +9,7 @@ region = Rect2(0, 0, 16, 16)
 
 [resource]
 script = ExtResource("1_04tml")
-name = "iron_ore"
+ore_name = "Iron"
 texture = SubResource("AtlasTexture_ydtff")
 value = 20
 metadata/_custom_type_script = "uid://btqpwpmhfs85t"
